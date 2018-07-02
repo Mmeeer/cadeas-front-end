@@ -20,6 +20,7 @@
       <Card/>
       <Card/>
       {{ip}}
+      <el-button @click="clickButton(1)">Button</el-button>
     </el-main>
   </el-container>
 </template>
@@ -30,10 +31,21 @@ export default{
   components: {
     Card
   },
+  sockets: {
+    connect: function(){
+      console.log('socket')
+    },
+    news: function(val){
+      console.log(val)
+    }
+  },
   methods: {
     async fetchSomething() {
       const ip = await this.$axios.$get('http://localhost:8080/')
       this.ip = ip
+    },
+    clickButton: function(val){
+      this.$socket.emit('event', {number: 1})
     }
   }
 }

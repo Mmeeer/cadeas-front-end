@@ -17,7 +17,8 @@ module.exports = {
     'element-ui/lib/theme-chalk/index.css'
   ],
   plugins: [
-    '~/plugins/element-ui'
+    '~/plugins/element-ui',
+    {src: '~/plugins/socket.io', ssr: false}
   ],
   modules: [
     '@nuxtjs/axios'
