@@ -9,22 +9,34 @@
           <el-input placeholder="Password" type="password" v-model="password"></el-input>
         </el-form-item>
         <el-form-item style="text-align: center;">
-          <el-button type="success">Signup</el-button>
+          <el-button type="success" @click="goSignup" :disabled="disabled">Signup</el-button>
         </el-form-item>
       </el-form>
     </el-card>
-  </el-col>  
+  </el-col>
 </template>
 <script>
+import { setCookie } from 'tiny-cookie'
 export default {
-  data() {
-    return {
+  data(){
+    return{
       username: '',
-      password: ''
+      password: '',
+      disabled: false
+    }
+  },
+  methods:{
+    async goSignup() {
+      this.disabled = true
+      console.log(this.username, this.password, this. disabled)
+      await this.$axios.$post("http://localhost:8080/signup", {username: this.username, password: this.password})
+      .then(async function(res){
+        if(res.success){
+          this.$router.push('/')
+        }
+      }.bind(this))
+      
     }
   }
 }
 </script>
-<style>
-
-</style>

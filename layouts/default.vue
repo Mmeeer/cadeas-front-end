@@ -3,6 +3,25 @@
     <nuxt/>
   </div>
 </template>
+<script>
+import {getCookie} from 'tiny-cookie'
+    
+export default {
+  beforeMount(){
+    this.$store.state.token = getCookie('token')
+    this.$store.state.id = getCookie('id')
+    if((this.$store.state.token == 'a' && this.$store.state.id == 'a') || (this.$store.state.token == null && this.$store.state.id == null)){
+      this.$store.state.token = ''
+      this.$store.state.id = ''
+    } else {
+      if(this.$store.state.token.length > 0 && this.$store.state.id.length){
+        this.$store.commit('setAxios')
+      }
+    }
+    console.log("hello")
+  }
+}
+</script>
 
 <style>
 html {
