@@ -35,7 +35,7 @@
           <el-collapse v-model="activeNames" @change="handleChange">
             <el-collapse-item title="Click here if you give up and want to see hint!" name="1" @click="conti(1)">
               <div class="list-item" v-for="(item, index) in theWord.results" :key="index">
-                <span v-if="!(item.definition === undefined)">Definition {{index + 1}} : {{item.definition}}</span>
+                <span v-if="!(item.definition === undefined)">Definition {{index + 1}} {{item.partOfSpeech}} : {{item.definition}}</span>
                 <br>
                 <span v-if="!(item.synonyms === undefined)">Synonyms {{index + 1}} : <span v-if="item.synonyms" v-for="synonym in item.synonyms" :key="synonym"> {{synonym}} </span></span>
               </div>
