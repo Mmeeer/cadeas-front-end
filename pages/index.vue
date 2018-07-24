@@ -40,7 +40,7 @@ export default{
   async mounted() {
     console.log(this.$store.state.id)
     if(this.$store.state.id != ''){
-      const ip = await this.$axios.$get('http://localhost:8080/lisa/' + this.$store.state.id)
+      const ip = await this.$axios.$get('http://206.189.154.213/api/lisa/' + this.$store.state.id)
       if(ip.success){
         this.ip = ip.data.list
       }

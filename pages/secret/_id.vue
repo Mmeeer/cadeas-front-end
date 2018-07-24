@@ -147,16 +147,16 @@ export default {
     this.loading = true;
     this.url = this.$route.params.id
     this.token = this.$store.state.token
-    var ip = await this.$axios.$get('http://localhost:8080/day/' + this.url)
+    var ip = await this.$axios.$get('http://206.189.154.213/api/day/' + this.url)
     if(ip.success){
       this.wordId = ip.wordId
     }
-    ip = await this.$axios.$get('http://localhost:8080/word/' + this.url + "/" + this.wordId )
+    ip = await this.$axios.$get('http://206.189.154.213/api/word/' + this.url + "/" + this.wordId )
     if(ip.success){
       this.workingOn = ip.theWord
     }
     console.log(ip)
-    ip = await this.$axios.$get('http://localhost:8080/mastered/' + this.url)
+    ip = await this.$axios.$get('http://206.189.154.213/api/mastered/' + this.url)
     if(ip.success){
       this.mastered = ip.mastered
     }
@@ -177,18 +177,18 @@ export default {
     async nextWord(val){
       this.loading = true;
       console.log(Number(this.ttype))
-      var ip = await this.$axios.$get('http://localhost:8080/progress/' + this.url + "/" + this.wordId + "/" + this.ttype)
+      var ip = await this.$axios.$get('http://206.189.154.213/api/progress/' + this.url + "/" + this.wordId + "/" + this.ttype)
       if(ip.success){
         this.wordId = ip.wordId
       }
       this.activeNames = ['']
       this.con = false
       this.ttype = ''
-      ip = await this.$axios.$get('http://localhost:8080/word/' + this.url + "/" + this.wordId )
+      ip = await this.$axios.$get('http://206.189.154.213/api/word/' + this.url + "/" + this.wordId )
       if(ip.success){
         this.workingOn = ip.theWord
       }
-      ip = await this.$axios.$get('http://localhost:8080/mastered/' + this.url)
+      ip = await this.$axios.$get('http://206.189.154.213/api/mastered/' + this.url)
       if(ip.success){
         this.mastered = ip.mastered
       }
