@@ -36,9 +36,9 @@
           <el-collapse v-model="activeNames" @change="handleChange">
             <el-collapse-item title="Click here if you give up and want to see hint!" name="1" @click="conti(1)">
               <div class="list-item" v-for="(item, index) in workingOn.results" :key="index">
-                <span v-if="!(item.definition === undefined)">Definition {{index + 1}} {{item.partOfSpeech}} : {{item.definition}}</span>
+                <span v-if="!(item.definition === undefined)">Def{{index + 1}}, {{item.partOfSpeech}}: {{item.definition}}</span>
                 <br>
-                <span v-if="!(item.synonyms === undefined)">Synonyms {{index + 1}} : <span v-if="item.synonyms" v-for="synonym in item.synonyms" :key="synonym"> {{synonym}} </span></span>
+                <span v-if="!(item.synonyms === undefined)">Syn{{index + 1}} : <span v-if="item.synonyms" v-for="synonym in item.synonyms" :key="synonym"> {{synonym}} </span></span>
               </div>
             </el-collapse-item>
           </el-collapse>
@@ -46,14 +46,14 @@
           <el-form>
             <el-form-item v-if="con" >
               <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-                <el-button @click="nextWord(1)">Үргэлжлүүлэх</el-button>
+                <el-button @click="nextWord(1)" :disabled="loading">Үргэлжлүүлэх</el-button>
               </el-row>
               <div v-if="ttype == '3' || ttype == '4'">
               <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
                 Буруу санасан бол:
               </el-row>
               <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-                <el-button @click="nextWord(2)" size="mini">Буруу санасан үргэлжлүүлэх</el-button>
+                <el-button @click="nextWord(2)" size="mini" :disabled="loading">Буруу санасан үргэлжлүүлэх</el-button>
               </el-row>
               </div>
               <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
@@ -69,12 +69,12 @@
             </el-form-item>
             <el-form-item v-if="!con">
               <el-row style="margin-bottom: 10px; display: flex; flex-direction: row; justify-content: center; align-items: center;">
-                <el-button @click="conti(1)" type="danger" size="mini">Ёстой Сандаггүй ээ.</el-button>
-                <el-button @click="conti(2)" type="warning" size="mini">Харсан үг байна бүрэн сандаггүй ээ.</el-button>
+                <el-button @click="conti(1)" type="danger" size="mini" :disabled="loading">Ёстой Сандаггүй ээ.</el-button>
+                <el-button @click="conti(2)" type="warning" size="mini" :disabled="loading">Харсан үг байна бүрэн сандаггүй ээ.</el-button>
               </el-row>
               <el-row style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-                <el-button @click="conti(3)" type="primary" size="mini">Нийтлэг утгыг нь санаж байна.</el-button>
-                <el-button @click="conti(4)" type="success" size="mini">Бүүр бүх илэрхийлдэг утгатай нь санаж байна</el-button>
+                <el-button @click="conti(3)" type="primary" size="mini" :disabled="loading">Нийтлэг утгыг нь санаж байна.</el-button>
+                <el-button @click="conti(4)" type="success" size="mini" :disabled="loading">Бүүр бүх илэрхийлдэг утгатай нь санаж байна</el-button>
               </el-row>
             </el-form-item>
           </el-form>
@@ -97,6 +97,7 @@ export default {
       con: false,
       ttype: '',
       mastered: 0,
+      loading: false,
       data: {
 
       }
@@ -142,11 +143,24 @@ export default {
     //   }
     // }
   },
-  mounted(){
+  async mounted(){
+    this.loading = true;
     this.url = this.$route.params.id
     this.token = this.$store.state.token
-    
-    this.$socket.emit('day', {day: this.url, token: this.token})
+    var ip = await this.$axios.$get('http://localhost:8080/day/' + this.url)
+    if(ip.success){
+      this.wordId = ip.wordId
+    }
+    ip = await this.$axios.$get('http://localhost:8080/word/' + this.url + "/" + this.wordId )
+    if(ip.success){
+      this.workingOn = ip.theWord
+    }
+    console.log(ip)
+    ip = await this.$axios.$get('http://localhost:8080/mastered/' + this.url)
+    if(ip.success){
+      this.mastered = ip.mastered
+    }
+    this.loading = false
   },
   methods: {
     handleChange(val) {
@@ -160,12 +174,25 @@ export default {
       this.activeNames = ['1']
       this.con = true
     },
-    nextWord(val){
+    async nextWord(val){
+      this.loading = true;
       console.log(Number(this.ttype))
-      this.$socket.emit('progress', {day: this.url, token: this.token, result: Number(this.ttype), wordId: this.wordId})
+      var ip = await this.$axios.$get('http://localhost:8080/progress/' + this.url + "/" + this.wordId + "/" + this.ttype)
+      if(ip.success){
+        this.wordId = ip.wordId
+      }
       this.activeNames = ['']
       this.con = false
       this.ttype = ''
+      ip = await this.$axios.$get('http://localhost:8080/word/' + this.url + "/" + this.wordId )
+      if(ip.success){
+        this.workingOn = ip.theWord
+      }
+      ip = await this.$axios.$get('http://localhost:8080/mastered/' + this.url)
+      if(ip.success){
+        this.mastered = ip.mastered
+      }
+      this.loading = false;
     }
   }
 }

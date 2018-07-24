@@ -29,7 +29,7 @@ export default {
     async goLogin() {
       this.disabled = true
       console.log(this.username, this.password, this. disabled)
-      await this.$axios.$post("http://206.189.154.213/api/login", {username: this.username, password: this.password})
+      await this.$axios.$post("http://localhost:8080/login", {username: this.username, password: this.password})
       .then(async function(res){
         if(res.success){
           console.log(res)
